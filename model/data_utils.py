@@ -406,24 +406,24 @@ def get_chunks(seq, tags):
             chunk = (chunk_start, i)
             chunks.append(chunk)
             chunk_start = None
-        elif tok != 'O':
-            if chunk_start is None:
-                chunk_start = i
-            elif tok == 'B':
-                chunk = (chunk_start, i)
-                chunks.append(chunk)
-                chunk_start = i
+        # elif tok != 'O':
+        #     if chunk_start is None:
+        #         chunk_start = i
+        #     elif tok == 'B':
+        #         chunk = (chunk_start, i)
+        #         chunks.append(chunk)
+        #         chunk_start = i
 
-        # elif tok == "O" and chunk_start is None:
-        #     pass
-        # elif tok == "B" and chunk_start is not None:
-        #     chunk = (chunk_start, i)
-        #     chunks.append(chunk)
-        #     chunk_start = i
-        # elif tok == "B" and chunk_start is None:
-        #     chunk_start = i
-        # elif tok == "I":
-        #     pass
+        elif tok == "O" and chunk_start is None:
+            pass
+        elif tok == "B" and chunk_start is not None:
+            chunk = (chunk_start, i)
+            chunks.append(chunk)
+            chunk_start = i
+        elif tok == "B" and chunk_start is None:
+            chunk_start = i
+        elif tok == "I":
+            pass
     if chunk_start is not None:
         chunk = (chunk_start, len(seq))
         chunks.append(chunk)
