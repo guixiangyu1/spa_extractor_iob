@@ -410,7 +410,7 @@ def get_chunks(seq, tags):
             if chunk_start is None:
                 chunk_start = i
             elif tok == 'B':
-                chunk == (chunk_start, i)
+                chunk = (chunk_start, i)
                 chunks.append(chunk)
                 chunk_start = i
 
