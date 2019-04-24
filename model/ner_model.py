@@ -300,10 +300,11 @@ class NERModel(BaseModel):
         msg = " - ".join(["{} {:04.2f}".format(k, v)
                 for k, v in metrics.items()])
         self.logger.info(msg)
+        self.logger.info("loss for dev: {}".format(loss))
         if self.config.metrics=='f1':
             return metrics["f1"]
         elif self.config.metrics=='loss':
-            return -loss
+            return loss
 
 
     def run_evaluate(self, test):
