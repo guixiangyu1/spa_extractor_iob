@@ -208,7 +208,7 @@ class NERModel(BaseModel):
                     logits=self.logits, labels=self.labels)
             mask = tf.sequence_mask(self.sequence_lengths)
             losses = tf.boolean_mask(losses, mask)
-            self.loss = tf.reduce_mean(losses)
+            self.loss = tf.reduce_sum(losses)
 
 
         # for tensorboard
@@ -334,6 +334,7 @@ class NERModel(BaseModel):
             for words, labels in minibatches(test, self.config.batch_size):
                 labels_pred, sequence_lengths, loss = self.predict_batch(words, labels)
 
+                losses.append(loss)
 
                 for lab, lab_pred, length in zip(labels, labels_pred,
                                                  sequence_lengths):
@@ -356,7 +357,7 @@ class NERModel(BaseModel):
                     # for one_tag in lab_pred:
                     #     g.write("{}\n".format(d[one_tag]))
                     # g.write("\n")
-                losses.append(loss)
+
 
 
 
@@ -374,7 +375,7 @@ class NERModel(BaseModel):
             g.write("{}\n".format(total_preds))
             g.write("{}\n".format(total_correct))
 
-        return {"acc": 100*acc, "f1": 100*f1, "p" : 100*p, "r" : 100*r}, np.mean(losses)
+        return {"acc": 100*acc, "f1": 100*f1, "p" : 100*p, "r" : 100*r}, np.sum(losses)
 
 
     def predict(self, words_raw):
