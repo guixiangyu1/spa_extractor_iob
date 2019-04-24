@@ -11,7 +11,7 @@ def main():
     config.dropout          = 0.5
     config.batch_size       = 20
     config.lr_method        = "sgd"
-    config.lr               = 0.001
+    config.lr               =  0.001
     config.lr_decay         = 1.0
     config.clip             = 2.0 # if negative, no clipping
     config.nepoch_no_imprv  = 6
