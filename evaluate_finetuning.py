@@ -78,7 +78,7 @@ def main():
 
     # create dataset
     test  = CoNLLDataset(config.filename_test, config.processing_word,
-                         config.processing_tag, config.max_iter)
+                         config.processing_tag, max_length=None)
 
     # evaluate and interact
     model.evaluate(test)
