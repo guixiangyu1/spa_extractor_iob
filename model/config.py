@@ -96,7 +96,6 @@ class Config():
     lr_decay         = 1.0
     clip             = 5 # if negative, no clipping
     nepoch_no_imprv  = 11
-    metrics = 'loss'
 
     # model hyperparameters
     hidden_size_char = 100 # lstm on chars
