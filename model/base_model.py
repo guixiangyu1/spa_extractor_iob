@@ -155,7 +155,7 @@ class BaseModel(object):
             dev: dataset
 
         """
-        best_score = 0
+        best_score = float('-inf')
         nepoch_no_imprv = 0 # for early stopping
         # self.add_summary() # tensorboard
 
@@ -172,8 +172,7 @@ class BaseModel(object):
             self.config.lr *= self.config.lr_decay # decay learning rate
 
             # early stopping and saving best parameters
-            if (self.config.metrics=='f1' and score >= best_score) or \
-                    (self.config.metrics=='loss' and score <= best_score):
+            if score >= best_score:
                 nepoch_no_imprv = 0
                 self.save_session()
                 best_score = score

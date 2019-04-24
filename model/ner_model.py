@@ -304,7 +304,7 @@ class NERModel(BaseModel):
         if self.config.metrics=='f1':
             return metrics["f1"]
         elif self.config.metrics=='loss':
-            return loss
+            return -loss
 
 
     def run_evaluate(self, test):
