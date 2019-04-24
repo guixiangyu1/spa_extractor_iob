@@ -28,11 +28,11 @@ def main():
 
     # create datasets [(char_ids), word_id]
     dev   = CoNLLDataset(config.filename_dev, config.processing_word,
-                         config.processing_tag, config.max_iter)
+                         config.processing_tag, max_length=None)
     train = CoNLLDataset(config.filename_train, config.processing_word,
-                         config.processing_tag, config.max_iter)
+                         config.processing_tag, config.max_length)
     test = CoNLLDataset(config.filename_test, config.processing_word,
-                         config.processing_tag, config.max_iter)
+                         config.processing_tag, max_length=None)
 
     # train model
 

@@ -77,7 +77,7 @@ class Config():
 
     # filename_dev = filename_test = filename_train = "data/test.txt" # test
 
-    max_iter = None # if not None, max number of examples in Dataset
+    max_length = 300 # if not None, max length of sentences in Dataset, mainly used for train dataset
 
     # vocab (created from dataset with build_data.py)
     filename_words = "data/words.txt"

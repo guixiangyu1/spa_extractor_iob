@@ -41,7 +41,7 @@ class CoNLLDataset(object):
 
     """
     def __init__(self, filename, processing_word=None, processing_tag=None,
-                 max_iter=None):
+                 max_length=None):
         """
         Args:
             filename: path to the file
@@ -53,20 +53,20 @@ class CoNLLDataset(object):
         self.filename = filename
         self.processing_word = processing_word
         self.processing_tag = processing_tag
-        self.max_iter = max_iter
+        self.max_length = max_length
         self.length = None
 
 
     def __iter__(self):
-        niter = 0
+
         with open(self.filename) as f:
             words, tags = [], []
             for line in f:
                 line = line.strip()            #去掉前后的空格
                 if (len(line) == 0 or line.startswith("-DOCSTART-")):
                     if len(words) != 0:
-                        niter += 1
-                        if self.max_iter is not None and niter > self.max_iter:
+
+                        if self.max_length is not None and len(words) > self.max_length:
                             break
                         yield words, tags
                         words, tags = [], []
