@@ -67,7 +67,7 @@ class CoNLLDataset(object):
                     if len(words) != 0:
 
                         if self.max_length is not None and len(words) > self.max_length:
-                            break
+                            words, tags = words[:self.max_length], tags[:self.max_length]
                         yield words, tags
                         words, tags = [], []
                 else:
