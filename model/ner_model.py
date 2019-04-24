@@ -230,7 +230,7 @@ class NERModel(BaseModel):
         self.initialize_session() # now self.sess is defined and vars are init
 
 
-    def predict_batch(self, words):
+    def predict_batch(self, words, labels):
         """
         Args:
             words: list of sentences
@@ -240,7 +240,7 @@ class NERModel(BaseModel):
             sequence_length
 
         """
-        fd, sequence_lengths = self.get_feed_dict(words, dropout=1.0)
+        fd, sequence_lengths = self.get_feed_dict(words, labels, dropout=1.0)
 
 
 
@@ -331,7 +331,7 @@ class NERModel(BaseModel):
             # with open("results/tag_pred.txt", "w") as g:
 
             for words, labels in minibatches(test, self.config.batch_size):
-                labels_pred, sequence_lengths, loss = self.predict_batch(words)
+                labels_pred, sequence_lengths, loss = self.predict_batch(words, labels)
 
 
                 for lab, lab_pred, length in zip(labels, labels_pred,
