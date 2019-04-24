@@ -95,7 +95,7 @@ class Config():
     lr               = 0.01
     lr_decay         = 0.9
     clip             = 5 # if negative, no clipping
-    nepoch_no_imprv  = 10
+    nepoch_no_imprv  = 11
     metrics = 'loss'
 
     # model hyperparameters
