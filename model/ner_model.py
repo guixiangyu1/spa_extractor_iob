@@ -300,7 +300,7 @@ class NERModel(BaseModel):
         msg = " - ".join(["{} {:04.2f}".format(k, v)
                 for k, v in metrics.items()])
         self.logger.info(msg)
-        return metrics['f1']
+        return metrics['acc']
 
 
     def run_evaluate(self, test):
