@@ -193,7 +193,7 @@ class BaseModel(object):
 
         """
         self.logger.info("Testing model over test set")
-        metrics, loss = self.run_evaluate(test)   #在子类ner_model中已经实现了该方法
+        metrics = self.run_evaluate(test)   #在子类ner_model中已经实现了该方法
         msg = " - ".join(["{} {:04.2f}".format(k, v)
                 for k, v in metrics.items()])
         self.logger.info(msg)
