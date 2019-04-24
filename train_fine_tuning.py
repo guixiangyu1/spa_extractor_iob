@@ -13,7 +13,7 @@ def main():
     config.lr_method        = "sgd"
     config.lr               = 0.00001
     config.lr_decay         = 1.0
-    config.clip             = -2.0 # if negative, no clipping
+    config.clip             = 2.0 # if negative, no clipping
     config.nepoch_no_imprv  = 6
 
     config.dir_model = config.dir_output + "model.finetuning.weights/"
