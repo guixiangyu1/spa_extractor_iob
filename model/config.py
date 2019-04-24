@@ -60,6 +60,8 @@ class Config():
     dir_model  = dir_output + "model.weights/"
     path_log   = dir_output + "log.txt"
 
+
+
     # embeddings
     dim_word = 300
     dim_char = 100
@@ -94,6 +96,7 @@ class Config():
     lr_decay         = 1.0
     clip             = 5 # if negative, no clipping
     nepoch_no_imprv  = 5
+    metrics = 'loss'
 
     # model hyperparameters
     hidden_size_char = 100 # lstm on chars

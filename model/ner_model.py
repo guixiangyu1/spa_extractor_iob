@@ -247,8 +247,8 @@ class NERModel(BaseModel):
         if self.config.use_crf:
             # get tag scores and transition params of CRF
             viterbi_sequences = []
-            logits, trans_params = self.sess.run(
-                    [self.logits, self.trans_params], feed_dict=fd)
+            logits, trans_params, loss = self.sess.run(
+                    [self.logits, self.trans_params, self.loss], feed_dict=fd)
 
             # iterate over the sentences because no batching in vitervi_decode
             for logit, sequence_length in zip(logits, sequence_lengths):
@@ -257,12 +257,12 @@ class NERModel(BaseModel):
                         logit, trans_params)
                 viterbi_sequences += [viterbi_seq]
 
-            return viterbi_sequences, sequence_lengths
+            return viterbi_sequences, sequence_lengths, loss
 
         else:
-            labels_pred = self.sess.run(self.labels_pred, feed_dict=fd)
+            labels_pred, loss = self.sess.run([self.labels_pred, self.loss], feed_dict=fd)
 
-            return labels_pred, sequence_lengths
+            return labels_pred, sequence_lengths, loss
 
 
     def run_epoch(self, train, dev, epoch):
@@ -296,12 +296,14 @@ class NERModel(BaseModel):
             # if i % 10 == 0:
             #     self.file_writer.add_summary(summary, epoch*nbatches + i)
 
-        metrics = self.run_evaluate(dev)
+        metrics, loss = self.run_evaluate(dev)
         msg = " - ".join(["{} {:04.2f}".format(k, v)
                 for k, v in metrics.items()])
         self.logger.info(msg)
-
-        return metrics["f1"]
+        if self.config.metrics=='f1':
+            return metrics["f1"]
+        elif self.config.metrics=='loss':
+            return -loss
 
 
     def run_evaluate(self, test):
@@ -324,11 +326,13 @@ class NERModel(BaseModel):
 
         accs = []
         correct_preds, total_correct, total_preds = 0., 0., 0.
+        losses= []
         with open("results/extractor.txt", "w") as f:
             # with open("results/tag_pred.txt", "w") as g:
 
             for words, labels in minibatches(test, self.config.batch_size):
-                labels_pred, sequence_lengths = self.predict_batch(words)
+                labels_pred, sequence_lengths, loss = self.predict_batch(words)
+
 
                 for lab, lab_pred, length in zip(labels, labels_pred,
                                                  sequence_lengths):
@@ -351,6 +355,7 @@ class NERModel(BaseModel):
                     # for one_tag in lab_pred:
                     #     g.write("{}\n".format(d[one_tag]))
                     # g.write("\n")
+                losses.append(loss)
 
 
 
@@ -368,7 +373,7 @@ class NERModel(BaseModel):
             g.write("{}\n".format(total_preds))
             g.write("{}\n".format(total_correct))
 
-        return {"acc": 100*acc, "f1": 100*f1, "p" : 100*p, "r" : 100*r}
+        return {"acc": 100*acc, "f1": 100*f1, "p" : 100*p, "r" : 100*r}, np.mean(losses)
 
 
     def predict(self, words_raw):
