@@ -94,7 +94,7 @@ class Config():
     lr_method        = "adam"
     lr               = 0.001
     lr_decay         = 1.0
-    clip             = 5 # if negative, no clipping
+    clip             = -5 # if negative, no clipping
     nepoch_no_imprv  = 6
 
     # model hyperparameters
