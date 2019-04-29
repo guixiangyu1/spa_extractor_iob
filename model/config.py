@@ -70,7 +70,7 @@ class Config():
     filename_glove = "data/eswiki_20180420_300d.txt"
     # trimmed embeddings (created from glove_filename with build_data.py)
     filename_trimmed = "data/eswiki_20180420_300d.npz"
-    use_pretrained = True
+    use_pretrained = False
 
     # dataset
     filename_dev = "data/valid_spa.txt"
@@ -95,7 +95,7 @@ class Config():
     lr               = 0.005
     lr_decay         = 1.0
     clip             = -5 # if negative, no clipping
-    nepoch_no_imprv  = 6
+    nepoch_no_imprv  = 10
 
     # model hyperparameters
     hidden_size_char = 100 # lstm on chars
@@ -103,4 +103,4 @@ class Config():
 
     # NOTE: if both chars and crf, only 1.6x slower on GPU
     use_crf = True # if crf, training is 1.7x slower on CPU
-    use_chars = False # if char embedding, training is 3.5x slower on CPU
+    use_chars = True # if char embedding, training is 3.5x slower on CPU
