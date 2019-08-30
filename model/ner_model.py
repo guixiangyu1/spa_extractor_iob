@@ -302,7 +302,6 @@ class NERModel(BaseModel):
         self.logger.info(msg)
         return metrics['acc']
 
-
     def run_evaluate(self, test):
         """Evaluates performance on test set
 
@@ -313,57 +312,51 @@ class NERModel(BaseModel):
             metrics: (dict) metrics["acc"] = 98.4, ...
 
         """
+        idx_to_tag = {idx: tag for tag, idx in self.config.vocab_tags.items()}
+        # d = dict()
+        # with open("data/tags.txt") as f:
+        #     for idx, word in enumerate(f):
+        #         word = word.strip()  # 若没有这个strip（），则每个词包含一个换行符
+        #         d[idx] = word
 
-        d = dict()
-        with open("data/tags.txt") as f:
-            for idx, word in enumerate(f):
-                word = word.strip()  # 若没有这个strip（），则每个词包含一个换行符
-                d[idx] = word
-
-
+        # 增加了文件，然后分析
         accs = []
         correct_preds, total_correct, total_preds = 0., 0., 0.
-        losses= []
         with open("results/extractor.txt", "w") as f:
-            # with open("results/tag_pred.txt", "w") as g:
+            with open("results/tag_pred.txt", "w") as g:
 
-            for words, labels in minibatches(test, self.config.batch_size):
-                labels_pred, sequence_lengths = self.predict_batch(words)
+                for words, labels in minibatches(test, self.config.batch_size):
+                    labels_pred, sequence_lengths = self.predict_batch(words)
 
+                    for lab, lab_pred, length in zip(labels, labels_pred,
+                                                     sequence_lengths):
+                        lab = lab[:length]
+                        lab_pred = lab_pred[:length]
+                        accs += [a == b for (a, b) in zip(lab, lab_pred)]
 
+                        lab_chunks = set(get_chunks(lab, self.config.vocab_tags))
+                        lab_pred_chunks = set(get_chunks(lab_pred,
+                                                         self.config.vocab_tags))
 
-                for lab, lab_pred, length in zip(labels, labels_pred,
-                                                 sequence_lengths):
-                    lab = lab[:length]
-                    lab_pred = lab_pred[:length]
-                    accs += [a == b for (a, b) in zip(lab, lab_pred)]
+                        correct_preds += len(lab_chunks & lab_pred_chunks)
+                        total_preds += len(lab_pred_chunks)
+                        total_correct += len(lab_chunks)
+                        for true_entity in get_chunks(lab, self.config.vocab_tags):
+                            if true_entity in get_chunks(lab_pred, self.config.vocab_tags):
+                                f.write("1\n")
+                            else:
+                                f.write("0\n")
+                        for one_tag in lab_pred:
+                            one_tag = idx_to_tag[one_tag]
+                            g.write("{}\n".format(one_tag))
+                        g.write("\n")
 
-                    lab_chunks = set(get_chunks(lab, self.config.vocab_tags))
-                    lab_pred_chunks = set(get_chunks(lab_pred,
-                                                     self.config.vocab_tags))
-
-                    correct_preds += len(lab_chunks & lab_pred_chunks)
-                    total_preds += len(lab_pred_chunks)
-                    total_correct += len(lab_chunks)
-                    for true_entity in get_chunks(lab, self.config.vocab_tags):
-                        if true_entity in get_chunks(lab_pred, self.config.vocab_tags):
-                            f.write("1\n")
-                        else:
-                            f.write("0\n")
-                    # for one_tag in lab_pred:
-                    #     g.write("{}\n".format(d[one_tag]))
-                    # g.write("\n")
-
-
-
-
-
-        p   = correct_preds / total_preds if correct_preds > 0 else 0
-        r   = correct_preds / total_correct if correct_preds > 0 else 0
-        f1  = 2 * p * r / (p + r) if correct_preds > 0 else 0
+        p = correct_preds / total_preds if correct_preds > 0 else 0
+        r = correct_preds / total_correct if correct_preds > 0 else 0
+        f1 = 2 * p * r / (p + r) if correct_preds > 0 else 0
         acc = np.mean(accs)
         print("correct_preds: ", correct_preds)
-        print("total_preds: "  , total_preds)
+        print("total_preds: ", total_preds)
         print("total_correct: ", total_correct)
 
         with open("results/number.txt", "w") as g:
@@ -371,7 +364,7 @@ class NERModel(BaseModel):
             g.write("{}\n".format(total_preds))
             g.write("{}\n".format(total_correct))
 
-        return {"acc": 100*acc, "f1": 100*f1, "p" : 100*p, "r" : 100*r}
+        return {"acc": 100 * acc, "f1": 100 * f1, "p": 100 * p, "r": 100 * r}
 
 
     def predict(self, words_raw):
