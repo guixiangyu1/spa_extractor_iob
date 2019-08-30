@@ -323,7 +323,7 @@ class NERModel(BaseModel):
         accs = []
         correct_preds, total_correct, total_preds = 0., 0., 0.
         with open("results/extractor.txt", "w") as f:
-            with open("results/tag_pred.txt", "w") as g:
+            with open("results/spa_iob_div.txt", "w") as g:
 
                 for words, labels in minibatches(test, self.config.batch_size):
                     labels_pred, sequence_lengths = self.predict_batch(words)
